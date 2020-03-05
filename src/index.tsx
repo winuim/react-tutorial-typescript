@@ -1,8 +1,8 @@
-import React from 'react';
-import * as ReactDOM from 'react-dom';
-import './index.css';
+import React from "react";
+import * as ReactDOM from "react-dom";
+import "./index.css";
 
-type SquareType = 'O' | 'X' | null;
+type SquareType = "O" | "X" | null;
 
 interface SquareProps {
   value: SquareType;
@@ -24,6 +24,11 @@ interface GameState {
   stepNumber: number;
 }
 
+/**
+ * CalculateWinner
+ * @param {Array<SquareType>} squares
+ * @return {SquareType}
+ */
 function calculateWinner(squares: Array<SquareType>) {
   const lines = [
     [0, 1, 2],
@@ -33,7 +38,7 @@ function calculateWinner(squares: Array<SquareType>) {
     [1, 4, 7],
     [2, 5, 8],
     [0, 4, 8],
-    [2, 4, 6],
+    [2, 4, 6]
   ];
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
@@ -44,6 +49,11 @@ function calculateWinner(squares: Array<SquareType>) {
   return null;
 }
 
+/**
+ * Square
+ * @param {SquareProps} props
+ * @return {JSX.Element}
+ */
 function Square(props: SquareProps) {
   return (
     <button className="square" onClick={props.onClick}>
@@ -52,7 +62,16 @@ function Square(props: SquareProps) {
   );
 }
 
+
+/**
+ * Board
+ */
 class Board extends React.Component<BoardProps> {
+  /**
+   * renderSquare
+   * @param {number} i
+   * @return {JSX.Element}
+   */
   renderSquare(i: number) {
     return <Square
       value={this.props.squares[i]}
@@ -60,6 +79,10 @@ class Board extends React.Component<BoardProps> {
     />;
   }
 
+  /**
+   * render
+   * @return {JSX.Element}
+   */
   render() {
     return (
       <div>
@@ -83,7 +106,14 @@ class Board extends React.Component<BoardProps> {
   }
 }
 
+/**
+ * Game
+ */
 class Game extends React.Component<{}, GameState> {
+  /**
+   * constructor
+   * @param {any} props
+   */
   constructor(props: any) {
     super(props);
     this.state = {
@@ -91,10 +121,14 @@ class Game extends React.Component<{}, GameState> {
         squares: Array(9).fill(null)
       }],
       stepNumber: 0,
-      xIsNext: true,
+      xIsNext: true
     };
   }
 
+  /**
+   * handleClick
+   * @param {number} i
+   */
   handleClick(i: number) {
     const history = this.state.history.slice(0, this.state.stepNumber + 1);
     const current = history[history.length - 1];
@@ -102,23 +136,31 @@ class Game extends React.Component<{}, GameState> {
     if (calculateWinner(squares) || squares[i]) {
       return;
     }
-    squares[i] = this.state.xIsNext ? 'X' : 'O';
+    squares[i] = this.state.xIsNext ? "X" : "O";
     this.setState({
       history: history.concat([{
-        squares: squares,
+        squares: squares
       }]),
       stepNumber: history.length,
       xIsNext: !this.state.xIsNext
     });
   }
-  
+
+  /**
+   * jumpTo
+   * @param {number} step
+   */
   jumpTo(step: number) {
     this.setState({
       stepNumber: step,
-      xIsNext: (step % 2) === 0,
+      xIsNext: (step % 2) === 0
     });
   }
 
+  /**
+   * render
+   * @return {JSX.Element}
+   */
   render() {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
@@ -126,8 +168,8 @@ class Game extends React.Component<{}, GameState> {
 
     const moves = history.map((step, move) => {
       const desc = move ?
-        'Go to move #' + move :
-        'Go to game start';
+        "Go to move #" + move :
+        "Go to game start";
       return (
         <li key={move}>
           <button onClick={() => this.jumpTo(move)}>{desc}</button>
@@ -137,9 +179,9 @@ class Game extends React.Component<{}, GameState> {
 
     let status: string;
     if (winner) {
-      status = 'Winner: ' + winner;
+      status = "Winner: " + winner;
     } else {
-      status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
+      status = "Next player: " + (this.state.xIsNext ? "X" : "O");
     }
 
     return (
@@ -147,7 +189,7 @@ class Game extends React.Component<{}, GameState> {
         <div className="game-board">
           <Board
             squares={current.squares}
-            onClick={(i:number) => this.handleClick(i)}
+            onClick={(i: number) => this.handleClick(i)}
           />
         </div>
         <div className="game-info">
@@ -163,5 +205,5 @@ class Game extends React.Component<{}, GameState> {
 
 ReactDOM.render(
   <Game />,
-  document.getElementById('root')
+  document.getElementById("root")
 );
